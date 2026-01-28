@@ -69,7 +69,7 @@ tasks:
     schedule:
       hour: 18
       minute: 30
-    notify: false  # Gemini already notifies via email
+    notify: false  # Gemini already notifies via app for deep research
 ```
 
 | Field | Description |
