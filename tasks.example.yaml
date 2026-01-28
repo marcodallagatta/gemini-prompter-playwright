@@ -1,0 +1,23 @@
+# Gemini Task Scheduler Configuration
+#
+# Each task runs at the scheduled time via launchd.
+# Use 'notify: true' to receive Telegram notifications (Pro mode).
+
+tasks:
+  # Pro mode: quick queries with immediate response
+  - name: Morning Briefing
+    mode: pro
+    promptFile: ~/Dropbox/prompts/morning-briefing.txt
+    schedule:
+      hour: 8
+      minute: 30
+    notify: true  # Send Telegram notification with chat link
+
+  # Deep Research mode: in-depth analysis (Gemini emails when done)
+  - name: Daily Research
+    mode: deep-research
+    promptFile: ~/Dropbox/prompts/research.txt
+    schedule:
+      hour: 18
+      minute: 30
+    notify: false  # Gemini already notifies via email

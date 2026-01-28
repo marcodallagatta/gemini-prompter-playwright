@@ -1,0 +1,16 @@
+{
+  "name": "gemini-task-scheduler",
+  "version": "2.0.0",
+  "description": "Automated Gemini task scheduler with Pro and Deep Research modes",
+  "main": "gemini-runner.js",
+  "scripts": {
+    "start": "node gemini-runner.js",
+    "login": "node gemini-runner.js --login-only",
+    "task": "node gemini-runner.js --task",
+    "setup": "./setup.sh"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.1",
+    "playwright": "^1.40.0"
+  }
+}

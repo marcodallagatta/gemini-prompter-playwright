@@ -1,0 +1,41 @@
+# Sensitive - Browser profile with login session
+chrome-profile/
+
+# macOS system files
+.DS_Store
+*.DS_Store
+
+# Generated launchd plists (contain user-specific paths)
+com.user.gemini-research.plist
+plists/
+
+# User's task configuration (contains personal prompts/schedules)
+tasks.yaml
+
+# Node.js
+node_modules/
+
+# Log files
+*.log
+launchd-stdout.log
+launchd-stderr.log
+gemini.log
+
+# Task logs
+logs/
+
+# Environment files (if added later)
+.env
+.env.local
+.env*.local
+
+# Claude Code
+.claude/
+docs/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
