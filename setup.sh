@@ -79,9 +79,21 @@ if [ ! -f "$TASKS_FILE" ]; then
 fi
 
 # Parse and display tasks using Node.js
-echo "Found tasks.yaml with the following tasks:"
-echo ""
-node -e "
+TASK_COUNT=$(node -e "
+const fs = require('fs');
+const yaml = require('js-yaml');
+const config = yaml.load(fs.readFileSync('$TASKS_FILE', 'utf-8'));
+const tasks = config.tasks || [];
+console.log(tasks.length);
+")
+
+if [ "$TASK_COUNT" -eq 0 ]; then
+  echo "No tasks defined in tasks.yaml"
+  echo ""
+else
+  echo "Found tasks.yaml with the following tasks:"
+  echo ""
+  node -e "
 const fs = require('fs');
 const yaml = require('js-yaml');
 const config = yaml.load(fs.readFileSync('$TASKS_FILE', 'utf-8'));
@@ -91,7 +103,8 @@ config.tasks.forEach((task, i) => {
   console.log('  ' + (i+1) + '. ' + task.name + ' (' + task.mode + ') at ' + h + ':' + m);
 });
 "
-echo ""
+  echo ""
+fi
 
 # ============================================================
 # Step 3: Installing LaunchAgents
@@ -99,13 +112,15 @@ echo ""
 echo "Step 3: Installing LaunchAgents"
 echo "--------------------------------"
 
-# Remove old gemini-task-*.plist files
-echo "Cleaning up old plist files..."
+# Remove old gemini-task-*.plist files from LaunchAgents
+echo "Cleaning up old launchd jobs..."
+REMOVED_COUNT=0
 for plist in "$LAUNCH_AGENTS_DIR"/gemini-task-*.plist; do
   if [ -f "$plist" ]; then
     launchctl unload "$plist" 2>/dev/null || true
     rm "$plist"
     echo "  Removed: $(basename "$plist")"
+    REMOVED_COUNT=$((REMOVED_COUNT + 1))
   fi
 done
 
@@ -115,6 +130,11 @@ if [ -f "$LEGACY_PLIST" ]; then
   launchctl unload "$LEGACY_PLIST" 2>/dev/null || true
   rm "$LEGACY_PLIST"
   echo "  Removed: com.user.gemini-research.plist (legacy)"
+  REMOVED_COUNT=$((REMOVED_COUNT + 1))
+fi
+
+if [ "$REMOVED_COUNT" -eq 0 ]; then
+  echo "  No existing launchd jobs to remove"
 fi
 
 # Create plists and logs directories
@@ -124,6 +144,17 @@ mkdir -p "$LOGS_DIR"
 # Clear old generated plists
 rm -f "$PLISTS_DIR"/*.plist 2>/dev/null || true
 
+# If no tasks, we're done - just cleanup was performed
+if [ "$TASK_COUNT" -eq 0 ]; then
+  echo ""
+  echo "=== Setup Complete ==="
+  echo ""
+  echo "All Gemini scheduled tasks have been removed."
+  echo "Add tasks to tasks.yaml and run setup.sh again to schedule them."
+  echo ""
+  exit 0
+fi
+
 # Generate plists for each task using Node.js
 echo "Generating plist files..."
 node -e "
@@ -132,7 +163,7 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const config = yaml.load(fs.readFileSync('$TASKS_FILE', 'utf-8'));
-const tasks = config.tasks;
+const tasks = config.tasks || [];
 const scriptDir = '$SCRIPT_DIR';
 const plistsDir = '$PLISTS_DIR';
 const logsDir = '$LOGS_DIR';

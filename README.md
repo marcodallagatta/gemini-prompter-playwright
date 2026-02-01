@@ -81,6 +81,8 @@ tasks:
 | `schedule.minute` | Minute to run (0-59) |
 | `notify` | Optional. Send Telegram notifications (`true`/`false`, default: `true`) |
 
+**Disabling all tasks**: To remove all scheduled tasks, comment out or remove all tasks from the `tasks` array, then run `./setup.sh`. This will automatically unload and delete all Gemini launchd jobs.
+
 ### .env (Optional)
 
 If you want Telegram notifications, configure your bot credentials in `.env`:
@@ -130,6 +132,8 @@ After editing `tasks.yaml`, run setup again to update launchd jobs:
 ```bash
 ./setup.sh
 ```
+
+**Note**: If you comment out or remove all tasks in `tasks.yaml`, running `./setup.sh` will automatically unload and delete all existing Gemini scheduled tasks from launchd. This provides a clean way to disable all automation without manually removing plist files.
 
 ### Check scheduled tasks
 
