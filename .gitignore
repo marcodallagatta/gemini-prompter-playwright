@@ -4,6 +4,7 @@ chrome-profile/
 # macOS system files
 .DS_Store
 *.DS_Store
+gemini_prompter_alias
 
 # Generated launchd plists (contain user-specific paths)
 com.user.gemini-research.plist
